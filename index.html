@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10주간 러닝 훈련 마스터 플래너</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 { margin-bottom: 5px; color: #0f172a; font-size: 1.5rem; }
+        p.subtitle { color: #64748b; margin-top: 0; font-size: 0.9rem; }
+
+        .progress-container {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .progress-bar-container {
+            background-color: #e2e8f0;
+            border-radius: 10px;
+            height: 18px;
+            width: 100%;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-bar {
+            background-color: var(--success);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .phase-title {
+            background-color: #dbeafe;
+            color: #1e40af;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            margin-top: 25px;
+            margin-bottom: 12px;
+        }
+
+        .week-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .week-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px dashed #f1f5f9;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+
+        .task-label {
+            flex-grow: 1;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .task-item.completed .task-label {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+
+        .badge {
+            background: #f1f5f9;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #475569;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🏃‍♂️ 10주간 훈련 플래너</h1>
+        <p class="subtitle">시작일: 2026년 9월 7일 (월) | 목표: 11월 16일 대회 완주</p>
+    </header>
+
+    <div class="progress-container">
+        <strong>전체 달성률: <span id="progress-text">0%</span></strong>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div id="program-container"></div>
+</div>
+
+<script>
+const programData = [
+    {
+        phase: "1단계: 회복 및 유산소 재건 (1 ~ 3주 차)",
+        weeks: [
+            { week: 1, date: "09.07 ~ 09.13", tasks: ["평일 1 (화/수): Zone 2 회복 조깅 (40분) / 심박수 140~148 bpm", "평일 2 (목/금): 빌드업주 (6km) / 4km(6:10) + 2km(5:40)", "주말 (토/일): 유산소 LSD (12km) / 페이스 6:10~6:20"] },
+            { week: 2, date: "09.14 ~ 09.20", tasks: ["평일 1 (화/수): Zone 2 회복 조깅 (40분) / 심박수 140~148 bpm", "평일 2 (목/금): 빌드업주 (6km) / 4km(6:10) + 2km(5:40)", "주말 (토/일): 유산소 LSD (13km) / 페이스 6:10~6:20"] },
+            { week: 3, date: "09.21 ~ 09.27", tasks: ["평일 1 (화/수): Zone 2 회복 조깅 (40분) / 심박수 140~148 bpm", "평일 2 (목/금): 빌드업주 (6km) / 4km(6:10) + 2km(5:40)", "주말 (토/일): 유산소 LSD (14km) / 페이스 6:10~6:20"] }
+        ]
+    },
+    {
+        phase: "2단계: 젖산 역치 및 보폭/파워 강화 (4 ~ 7주 차)",
+        weeks: [
+            { week: 4, date: "09.28 ~ 10.04", tasks: ["평일 1 (화/수): 역치 템포런 (웜업 1.5k + 5:25 6k + 쿨다운 1.5k)", "평일 2 (목/금): 지속주 (45분) / 페이스 6:00 (심박수 150)", "주말 (토/일): 핵심 LSD (15km) / 6:00 페이스"] },
+            { week: 5, date: "10.05 ~ 10.11", tasks: ["평일 1 (화/수): 역치 템포런 (웜업 1.5k + 5:25 6k + 쿨다운 1.5k)", "평일 2 (목/금): 지속주 (45분) / 페이스 6:00 (심박수 150)", "주말 (토/일): 핵심 LSD (16km) / 6:00 페이스"] },
+            { week: 6, date: "10.12 ~ 10.18", tasks: ["평일 1 (화/수): 역치 템포런 (웜업 1.5k + 5:25 6k + 쿨다운 1.5k)", "평일 2 (목/금): 지속주 (45분) / 페이스 6:00 (심박수 150)", "주말 (토/일): 핵심 LSD (18km) / 후반부 걷지 않기"] },
+            { week: 7, date: "10.19 ~ 10.25", tasks: ["평일 1 (화/수): 역치 템포런 (웜업 1.5k + 5:25 6k + 쿨다운 1.5k)", "평일 2 (목/금): 지속주 (45분) / 페이스 6:00 (심박수 150)", "주말 (토/일): 핵심 LSD (16km) / 5:50~6:00 페이스"] }
+        ]
+    },
+    {
+        phase: "3단계: 실전 레이스 페이스 및 테이퍼링 (8 ~ 10주 차)",
+        weeks: [
+            { week: 8, date: "10.26 ~ 11.01", tasks: ["실전 페이스 점검주 (12km) / 5:30 페이스 유지 (심박 160~165)"] },
+            { week: 9, date: "11.02 ~ 11.08", tasks: ["1차 테이퍼링 (8km) / 페이스 5:30 4km + 조깅 4km"] },
+            { week: 10, date: "11.09 ~ 11.16", tasks: ["컨디셔닝 (4km) / 5:30 페이스 2km + 질주 3회", "🏁 11월 16일 대회 당일!"] }
+        ]
+    }
+];
+
+function renderProgram() {
+    const container = document.getElementById('program-container');
+    let html = '';
+    let totalTasks = 0;
+    let completedTasks = 0;
+
+    programData.forEach(phase => {
+        html += `<div class="phase-title">${phase.phase}</div>`;
+        phase.weeks.forEach(w => {
+            html += `
+                <div class="week-card">
+                    <div class="week-header">
+                        <span>${w.week}주 차</span>
+                        <span class="badge">${w.date}</span>
+                    </div>
+                    <ul class="task-list">
+            `;
+            w.tasks.forEach((task, tIndex) => {
+                const taskId = `w${w.week}_t${tIndex}`;
+                const isChecked = localStorage.getItem(taskId) === 'true';
+                totalTasks++;
+                if (isChecked) completedTasks++;
+
+                html += `
+                    <li class="task-item ${isChecked ? 'completed' : ''}">
+                        <input type="checkbox" id="${taskId}" ${isChecked ? 'checked' : ''} onchange="toggleTask('${taskId}')">
+                        <label for="${taskId}" class="task-label">${task}</label>
+                    </li>
+                `;
+            });
+            html += `</ul></div>`;
+        });
+    });
+
+    container.innerHTML = html;
+    updateProgress(completedTasks, totalTasks);
+}
+
+function toggleTask(id) {
+    const checkbox = document.getElementById(id);
+    localStorage.setItem(id, checkbox.checked);
+    renderProgram();
+}
+
+function updateProgress(completed, total) {
+    const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
+    document.getElementById('progress-bar').style.width = percentage + '%';
+    document.getElementById('progress-text').innerText = percentage + '%';
+}
+
+document.addEventListener('DOMContentLoaded', renderProgram);
+</script>
+</body>
+</html>
